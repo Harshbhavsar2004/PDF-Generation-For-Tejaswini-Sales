@@ -157,7 +157,7 @@ export const generateDCR = async (data: FormData, download = false) => {
 
   // Instead of saving directly, return blob for preview or save for download
   if (download) {
-    doc.save("Annexure-DCR.pdf")
+    doc.save("Annexure.pdf")
   } else {
     return doc.output('blob')
   }

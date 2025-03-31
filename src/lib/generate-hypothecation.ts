@@ -3,7 +3,7 @@ import autoTable from "jspdf-autotable"
 import type { FormData } from "./types"
 import { formatDate } from "./utils"
 
-const addImageWithFixedSize = (doc: jsPDF, imgData: string, x: number, y: number, maxWidth: number, maxHeight: number) => {
+const addImageWithFixedSize = async (doc: jsPDF, imgData: string, x: number, y: number, maxWidth: number, maxHeight: number, quality = 0.5) => {
   return new Promise<void>((resolve) => {
     const img = new Image();
     img.src = imgData;
@@ -22,15 +22,22 @@ const addImageWithFixedSize = (doc: jsPDF, imgData: string, x: number, y: number
         imgWidth = maxHeight * aspectRatio;
       }
 
-      // Center inside the given space
-      const xOffset = x + (maxWidth - imgWidth) / 2;
-      const yOffset = y + (maxHeight - imgHeight) / 2;
+      // Convert to canvas for compression
+      const canvas = document.createElement("canvas");
+      canvas.width = imgWidth;
+      canvas.height = imgHeight;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
 
-      doc.addImage(imgData, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
+      // Convert image to compressed base64
+      const compressedImg = canvas.toDataURL("image/jpeg", quality); // Lower quality (0.5)
+
+      // Add compressed image to PDF
+      doc.addImage(compressedImg, "JPEG", x, y, imgWidth, imgHeight);
       resolve();
     };
 
-    img.onerror = () => resolve(); // If image fails to load, continue without error
+    img.onerror = () => resolve(); // Continue without breaking if image fails
   });
 };
 
@@ -199,7 +206,7 @@ doc.text(`Email: ${data.installerEmail}`, boxX, y + boxHeight + 25);
 
   // Instead of saving directly, return blob for preview or save for download
   if (download) {
-    doc.save("Annexure-A-Hypothecation.pdf")
+    doc.save("DCR.pdf")
   } else {
     return doc.output('blob')
   }
