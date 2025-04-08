@@ -102,8 +102,6 @@ export const generateWCR = async (data: FormData, download = false) => {
         "Yes",
       ],
       ["10", "Lightening Arrester", data.lightningArrester],
-      ["", "Warrantee Details (Product + Performance)", data.warrantyDetails],
-      ["", "Sanction number", data.sanctionNumber],
     ],
     theme: "grid",
     headStyles: {
