@@ -45,6 +45,12 @@ export interface FormData {
     customerSignature?: string
     vendorSignature?: string
     companyStamp?: string
-  }
+    // Additional fields for net meter agreement
+    agreementDate: string
+    consumerAddress: string
+    systemCapacity: string
+    vendorName: string
+    msedclRepresentative: string
+}
   
   

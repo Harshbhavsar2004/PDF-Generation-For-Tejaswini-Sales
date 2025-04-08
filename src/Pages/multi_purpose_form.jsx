@@ -5,6 +5,7 @@ import SolarForm from "@/components/solar-form"
 import { generateDCR } from "@/lib/generate-dcr"
 import { generateWCR } from "@/lib/generate-wcr"
 import { generateHypothecation } from "@/lib/generate-hypothecation"
+import { generateNetMeter } from "@/lib/generate-net-meter"
 
 export default function Multipurpose() {
   const [formData, setFormData] = useState({
@@ -50,12 +51,16 @@ export default function Multipurpose() {
     msedclOfficerName: "",
     msedclOfficerDesignation: "",
     msedclInspectionDate: "",
+    customerSignature: "",
+    vendorSignature: "",
+    companyStamp: "",
   })
 
   const [previewUrls, setPreviewUrls] = useState({
     dcr: null,
     wcr: null,
-    hypothecation: null
+    hypothecation: null,
+    netMeter: null
   })
 
   const handleFormChange = (data) => {
@@ -95,6 +100,32 @@ export default function Multipurpose() {
     }
   }
 
+  const handlePreviewNetMeter = async (e) => {
+    e.preventDefault()
+    try {
+      const pdfBlob = await generateNetMeter({
+        consumerName: formData.consumerName,
+        consumerNumber: formData.consumerNumber,
+        consumerAddress: formData.address,
+        agreementDate: new Date(),
+        systemCapacity: formData.sanctionedCapacity,
+        distributionLicensee: "MSEDCL",
+        distributionOffice: "Dhule",
+        vendorName: formData.companyName,
+        consumerWitness: formData.installerName,
+        msedclRepresentative: formData.msedclOfficerName,
+        msedclWitness: formData.msedclOfficerDesignation,
+        customerSignature: formData.customerSignature,
+        vendorSignature: formData.vendorSignature,
+        companyStamp: formData.companyStamp
+      }, false)
+      const url = URL.createObjectURL(pdfBlob)
+      setPreviewUrls(prev => ({ ...prev, netMeter: url }))
+    } catch (error) {
+      console.error('Error generating Net Meter preview:', error)
+    }
+  }
+
   const handleGenerateDCR = async (e) => {
     e.preventDefault()
     try {
@@ -122,6 +153,30 @@ export default function Multipurpose() {
     }
   }
 
+  const handleGenerateNetMeter = async (e) => {
+    e.preventDefault()
+    try {
+      await generateNetMeter({
+        consumerName: formData.consumerName,
+        consumerNumber: formData.consumerNumber,
+        consumerAddress: formData.address,
+        agreementDate: new Date(),
+        systemCapacity: formData.sanctionedCapacity,
+        distributionLicensee: "MSEDCL",
+        distributionOffice: "Dhule",
+        vendorName: formData.companyName,
+        consumerWitness: formData.installerName,
+        msedclRepresentative: formData.msedclOfficerName,
+        msedclWitness: formData.msedclOfficerDesignation,
+        customerSignature: formData.customerSignature,
+        vendorSignature: formData.vendorSignature,
+        companyStamp: formData.companyStamp
+      }, true)
+    } catch (error) {
+      console.error('Error downloading Net Meter:', error)
+    }
+  }
+
   return (
     <main className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6 text-center">Solar Installation Document Generator</h1>
@@ -129,7 +184,7 @@ export default function Multipurpose() {
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <SolarForm formData={formData} onChange={handleFormChange} />
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* DCR Section */}
           <div className="flex flex-col gap-4">
             <div className="flex gap-2">
@@ -224,6 +279,39 @@ export default function Multipurpose() {
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   Click "Preview DCR" to see the document here
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Net Meter Section */}
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-2">
+              <button
+                onClick={handlePreviewNetMeter}
+                className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+              >
+                Preview NetMeter
+              </button>
+              <button
+                onClick={handleGenerateNetMeter}
+                className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
+              >
+                Download NetMeter
+              </button>
+            </div>
+            <div className="h-[500px] border rounded-md p-2">
+              {previewUrls.netMeter ? (
+                <object
+                  data={previewUrls.netMeter}
+                  type="application/pdf"
+                  className="w-full h-full"
+                >
+                  <p>Unable to display PDF preview.</p>
+                </object>
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  Click "Preview Net Meter" to see the document here
                 </div>
               )}
             </div>

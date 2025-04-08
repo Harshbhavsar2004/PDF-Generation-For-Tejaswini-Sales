@@ -3,10 +3,18 @@ import autoTable from "jspdf-autotable"
 import type { FormData } from "./types"
 import { formatDate } from "./utils"
 
-const addImageWithFixedSize = async (doc: jsPDF, imgData: string, x: number, y: number, maxWidth: number, maxHeight: number) => {
+const addImageWithFixedSize = async (
+  doc: jsPDF,
+  imgData: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  maxHeight: number
+) => {
   return new Promise<void>((resolve) => {
     const img = new Image();
     img.src = imgData;
+
     img.onload = () => {
       let imgWidth = img.width;
       let imgHeight = img.height;
@@ -21,15 +29,15 @@ const addImageWithFixedSize = async (doc: jsPDF, imgData: string, x: number, y: 
         imgWidth = maxHeight * aspectRatio;
       }
 
-      // Center inside the given space
-      const xOffset = x + (maxWidth - imgWidth) / 2;
-      const yOffset = y + (maxHeight - imgHeight) / 2;
-
-      doc.addImage(imgData, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
-      resolve(); // Resolve the promise after adding the image
+      // Add image to PDF without compression
+      doc.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
+      resolve();
     };
+
+    img.onerror = () => resolve(); // Continue without breaking if image fails
   });
 };
+
 
 
 export const generateDCR = async (data: FormData, download = false) => {
@@ -86,19 +94,28 @@ export const generateDCR = async (data: FormData, download = false) => {
     },
   })
 
+  // After the table ends, add a new page
+  doc.addPage()
+  
+  // Add the title in center alignment
+  doc.setFontSize(16)
+  doc.setFont("helvetica", "bold")
+  doc.text("Proforma-A", doc.internal.pageSize.width / 2, 20, { align: "center" })
+  
+  doc.setFontSize(14)
+  doc.text("COMMISSIONING REPORT (PROVISIONAL) FOR GRID CONNECTED SOLAR", doc.internal.pageSize.width / 2, 30, { align: "center" })
+  doc.text("PHOTOVOLTAIC POWER PLANT (with Net-metering facility)", doc.internal.pageSize.width / 2, 40, { align: "center" })
+
   // Add certification text
-  const lastY = (doc as any).lastAutoTable.finalY + 10
   doc.setFontSize(10)
   doc.setFont("helvetica", "normal")
-
-  // Fix text wrapping issue by using splitTextToSize with proper width
   const certificationText = `Certified that a Grid Connected SPV Power Plant of ${data.sanctionedCapacity} KWp capacity has been installed at the site ${data.address} District ${data.address.split(" ").pop()} of MAHARASHTRA which has been installed by M/S ${data.companyName} on ${formatDate(data.installationDate)}.\nThe system is as per BIS/MNRE specifications. The system has been checked for its performance and found in order for further commissioning.`
 
   const textLines = doc.splitTextToSize(certificationText, 180)
-  doc.text(textLines, 14, lastY)
+  doc.text(textLines, 14, 60)
 
   // Add signature fields
-  const signatureY = lastY + 30
+  const signatureY = 100
   doc.setFontSize(10)
 
   // Add signature boxes with increased size
@@ -110,7 +127,6 @@ export const generateDCR = async (data: FormData, download = false) => {
   // Add signature labels
   doc.text("Signature of the beneficiary", 30, signatureY + 20)
   doc.text("Signature of the agency with name, seal and date", 110, signatureY + 20)
-
 
   const imagePromises = [];
 
@@ -125,39 +141,31 @@ export const generateDCR = async (data: FormData, download = false) => {
   }
   await Promise.all(imagePromises);
 
-  // Add a new page before MSEDCL inspection text
-  doc.addPage();
-
-  // Reset Y position for the new content
-  const inspectionY = 20;
-  doc.setFontSize(10);
+  // Add MSEDCL inspection text
+  const inspectionY = signatureY + 50
+  doc.setFontSize(10)
   doc.text(
     "The above RTS installation has been inspected by me for Pre-Commissioning Testing of Roof Top Solar",
     14,
     inspectionY,
-  );
+  )
   doc.text(
     `Connection on DT ${formatDate(data.msedclInspectionDate)} as per guidelines issued by the office of The Chief Engineer vide letter no 21653 on`,
     14,
     inspectionY + 5,
-  );
-  doc.text("dt.18.08.2022 and found in order for commissioning.", 14, inspectionY + 10);
+  )
+  doc.text("dt.18.08.2022 and found in order for commissioning.", 14, inspectionY + 10)
 
-  // Add MSEDCL officer signature box and details
-  const officerY = inspectionY + 25;
-  const boxWidth1 = 80;
-  const boxHeight1 = 40;
-
-  // Box for MSEDCL officer signature
-  doc.text("Signature of the MSEDCL Officer", 14, officerY + 20);
-  doc.text(`Name: ${data.msedclOfficerName}`, 14, officerY + 25);
-  doc.text(`Designation: ${data.msedclOfficerDesignation}`, 14, officerY + 30);
-  doc.text("Date and seal", 14, officerY + 35);
-
+  // Add MSEDCL officer signature
+  const officerY = inspectionY + 25
+  doc.text("Signature of the MSEDCL Officer", 14, officerY + 20)
+  doc.text(`Name: ${data.msedclOfficerName}`, 14, officerY + 25)
+  doc.text(`Designation: ${data.msedclOfficerDesignation}`, 14, officerY + 30)
+  doc.text("Date and seal", 14, officerY + 35)
 
   // Instead of saving directly, return blob for preview or save for download
   if (download) {
-    doc.save("Annexure.pdf")
+    doc.save("Annexure-DCR.pdf")
   } else {
     return doc.output('blob')
   }
