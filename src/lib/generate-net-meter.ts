@@ -122,17 +122,17 @@ export const generateNetMeter = async (
     new Date(data.agreementDate)
   )} at Dhule, between the Eligible Consumer, ${data.consumerName}, residing ${
     data.consumerAddress
-  } and holding Consumer No.: ${
+  } and holding Consumer No: ${
     data.consumerNumber
   } (hereinafter referred to as the "First Party").`;
   yPos = addParagraph(introText, yPos) + 5;
 
   const andText = "AND";
   doc.setFont("helvetica", "bold");
-  doc.text(andText, 105, yPos - 10, { align: "center" });
+  doc.text(andText, 105, yPos -2 , { align: "center" });
 
   const secondPartyText = `The Distribution Licensee- Maharashtra State Electricity Distribution Co. Ltd;and having its Registered Office at USD_II S/DN as second Party of this Agreement;`;
-  yPos = addParagraph(secondPartyText, yPos);
+  yPos = addParagraph(secondPartyText, yPos + 5);
 
   // ===== PAGE 2 =====
   doc.addPage();
@@ -317,7 +317,7 @@ export const generateNetMeter = async (
     ) + 10;
 
   // Add witness section
-  const witnessText = `In witness whereof ${data.vendorName} - (S) (VENDOR NAME) for and on behalf of Eligible Consumer and ${data.msedclRepresentative} for and on behalf of MSEDCL agree to this agreement.`;
+  const witnessText = `In witness whereof ${data.vendorName} - (S) (VENDOR NAME) for and on behalf of Eligible Consumer and ${data.consumerName} for and on behalf of MSEDCL agree to this agreement.`;
   yPos = addParagraph(witnessText, yPos) + 20;
 
   // Add signature boxes
