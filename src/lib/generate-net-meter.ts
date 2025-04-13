@@ -183,18 +183,19 @@ export const generateNetMeter = async (
 
   const safetyText3 = `If, at any time, the Licensee determines that the Eligible Consumer's Roof-top Solar PV\nSystem is causing or may cause damage to and/or results in the Licensee's other\nconsumers or its assets, the Eligible Consumer shall disconnect the Roof-top Solar PV\nSystem from the distribution Network upon direction from the Licensee, and Shall\nundertake corrective measures at his own expense prior to re-connection.`;
   yPos = addParagraph(safetyText3, yPos) + 5;
-
-  // Add page break before Section 4
-  doc.addPage();
-  yPos = 220;
-
-  // Section 4
   addSectionTitle("4. Other Clearances and Approvals:", yPos);
   yPos += 10;
 
   const clearancesText =
     "The Eligible Consumer shall obtain any statutory approvals and clearances that maybe required, such as from the Electrical Inspector or the municipal or other authorities, before connecting the Roof-top Solar PV System to the distribution Network.";
   yPos = addParagraph(clearancesText, yPos) + 5;
+
+  // Add page break before Section 4
+  doc.addPage();
+  yPos = 220;
+
+  // Section 4
+
 
   // Section 5
   addSectionTitle("5. Period of Agreement, and Termination:", yPos);
@@ -210,32 +211,28 @@ export const generateNetMeter = async (
     "By the Licensee, by giving 30 days' notice, if the Eligible Consumer breaches any terms of this Agreement or the provisions of the Grid Interactive Renewable Energy Systems Regulations and does not remedy such breach within 30 days, or such other reasonable period as may be provided, of receiving notice of such breach, or for any other valid reason communicated by the Licensee in writing.",
     yPos
   ) + 5;
+  addSectionTitle("6. Access and Disconnection:", yPos - 6);
+  yPos += 0;
+
+  yPos = addSubsection(
+    "6.1",
+    "The Eligible Consumer shall provide access to the Licensee to the metering equipment and disconnecting devices of Roof-top Solar PV System, both automatic and manual, by the Eligible Consumer.",
+    yPos
+  ) ;
+
+  yPos = addSubsection(
+    "6.2",
+    "If, in an emergent or outage situation, the Licensee cannot access the disconnecting devices of the Roof-top Solar PV System, both automatic and manual, it may disconnect power supply to the premises.",
+    yPos
+  ) ;
+
 
   // Add page break before Section 6
   doc.addPage();
   yPos = 20;
 
   // Section 6
-  addSectionTitle("6. Access and Disconnection:", yPos);
-  yPos += 5;
-
-  yPos = addSubsection(
-    "6.1",
-    "The Eligible Consumer shall provide access to the Licensee to the metering equipment and disconnecting devices of Roof-top Solar PV System, both automatic and manual, by the Eligible Consumer.",
-    yPos
-  ) + 2;
-
-  yPos = addSubsection(
-    "6.2",
-    "If, in an emergent or outage situation, the Licensee cannot access the disconnecting devices of the Roof-top Solar PV System, both automatic and manual, it may disconnect power supply to the premises.",
-    yPos
-  ) + 2;
-
-  yPos = addSubsection(
-    "6.3",
-    "Upon termination of this Agreement under Clause 5, the Eligible Consumer shall disconnect the Roof-top Solar PV System forthwith from the Network of the Licensee.",
-    yPos
-  ) + 5;
+  
 
   // Section 7
   addSectionTitle("7. Liabilities:", yPos);
@@ -243,15 +240,15 @@ export const generateNetMeter = async (
 
   const liabilitiesText1 =
     "The Parties shall indemnify each other for damages or adverse effects of either Party's negligence or misconduct during the installation of the Roof-top Solar PV System, connectivity with the distribution Network and operation of the System.";
-  yPos = addParagraph(liabilitiesText1, yPos) + 5;
+  yPos = addParagraph(liabilitiesText1, yPos) ;
 
   const liabilitiesText2 =
     "The Parties shall not be liable to each other for any loss of profits or revenues, business interruption losses, loss of contract or goodwill, or for indirect, consequential, incidental or special damages including, but not limited to, punitive or exemplary damages, whether any of these liabilities, losses or damages arise in contract, or otherwise.";
   yPos = addParagraph(liabilitiesText2, yPos) + 5;
 
   // Section 8
-  addSectionTitle("8. Commercial Settlement:", yPos);
-  yPos += 5;
+  addSectionTitle("8. Commercial Settlement:", yPos - 6);
+  yPos += 0;
 
   yPos = addSubsection(
     "8.1",
@@ -283,42 +280,38 @@ export const generateNetMeter = async (
     yPos
   ) + 5;
 
-  // Add page break for remaining sections
-  doc.addPage();
-  yPos = 20;
-
   // Section 9
-  addSectionTitle("9. Connection Costs:", yPos);
-  yPos += 10;
+  addSectionTitle("9. Connection Costs:", yPos - 6);
+  yPos += 0;
 
   yPos =
     addSubsection(
       "9.1",
       "The Eligible Consumer shall bear all costs related to the setting up of the Roof-top Solar PV System, excluding the Net Metering Arrangement costs.",
       yPos
-    ) + 15;
+    ) + 2;
 
   // Section 10
   addSectionTitle("10. Dispute Resolution:", yPos);
-  yPos += 10;
+  yPos += 5;
 
   yPos =
     addSubsection(
       "10.1",
       "Any dispute arising under this Agreement shall be resolved promptly, in good faith and in an equitable manner by both the Parties.",
       yPos
-    ) + 10;
+    ) + 2;
 
   yPos =
     addSubsection(
       "10.2",
       "The Eligible Consumer shall have recourse to the concerned Consumer Grievance Redressal Forum constituted under the relevant Regulations in respect of any grievance regarding billing which has not been redressed by the Licensee.",
       yPos
-    ) + 10;
+    ) + 2;
 
   // Add witness section
   const witnessText = `In witness whereof ${data.vendorName} - (S) (VENDOR NAME) for and on behalf of Eligible Consumer and ${data.consumerName} for and on behalf of MSEDCL agree to this agreement.`;
-  yPos = addParagraph(witnessText, yPos) + 20;
+  yPos = addParagraph(witnessText, yPos) + 5;
 
   // Add signature boxes
   const boxWidth = 60;
@@ -331,7 +324,7 @@ export const generateNetMeter = async (
   doc.setFont("helvetica", "bold");
   doc.text("For Eligible Consumer", leftBoxX, yPos + 20);
   doc.text("for and on behalf of MSEDCL", rightBoxX, yPos + 20);
-  yPos += 30;
+  yPos += 5;
 
 
 
