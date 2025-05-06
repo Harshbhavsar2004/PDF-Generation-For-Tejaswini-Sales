@@ -18,8 +18,8 @@ export default function WorkCompletionForm() {
     bankBranch: "Pramodnagar Branch",
     bankLocation: "Dhule",
     installerName: "JANHAVI ENTERPRISES DHULE",
-    installerAddress: "Nakane Road - 424002, Maharashtra (MH), India",
-    installerContact: "Mobile: +91 9765312906"
+    installerAddress: "",
+    installerContact: ""
   })
   const [previewUrl, setPreviewUrl] = useState(null)
 
@@ -148,6 +148,28 @@ export default function WorkCompletionForm() {
                     value={formData.installerName}
                     onChange={handleChange}
                     placeholder="e.g. JANHAVI ENTERPRISES DHULE"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="installerAddress">Installer Address</Label>
+                  <Textarea
+                    id="installerAddress"
+                    name="installerAddress"
+                    value={formData.installerAddress}
+                    onChange={handleChange}
+                    placeholder="Enter installer address"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="installerContact">Installer Contact</Label>
+                  <Input
+                    id="installerContact"
+                    name="installerContact"
+                    value={formData.installerContact}
+                    onChange={handleChange}
+                    placeholder="Enter installer contact"
                   />
                 </div>
               </div>
