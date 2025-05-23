@@ -223,7 +223,7 @@ export const generateNetMeter = async (
   yPos = addSubsection(
     "6.2",
     "If, in an emergent or outage situation, the Licensee cannot access the disconnecting devices of the Roof-top Solar PV System, both automatic and manual, it may disconnect power supply to the premises.",
-    yPos
+    yPos -2
   ) ;
 
 
@@ -254,28 +254,22 @@ export const generateNetMeter = async (
     "8.1",
     "The commercial settlements under this Agreement shall be in accordance with the Grid Interactive Renewable Energy Systems Regulations.",
     yPos
-  ) + 2;
+  ) + 1;
 
   yPos = addSubsection(
     "8.2",
     "The Licensee shall not be liable to compensate the Eligible Consumer if his Rooftop Solar PV System is unable to inject surplus power generated into the Licensee's Network on account of failure of power supply in the grid/Network.",
     yPos
-  ) + 2;
+  ) + 1;
 
   yPos = addSubsection(
     "8.3",
     "The existing metering System, if not in accordance with the Grid Interactive Renewable Energy Systems Regulations, shall be replaced by a bi-directional meter (whole current/CT operated) or a pair of meters (as per the definition of 'Net Meter' in the Regulations), and a separate generation meter may be provided to measure Solar power generation. The bi-directional meter (whole current/CT operated) or pair of meters shall be installed at the inter-connection point to the Licensee's Network for recording export and import of energy.",
     yPos
-  ) + 2;
+  ) + 0.5;
 
   yPos = addSubsection(
     "8.4",
-    "The uni-directional and bi-directional or pair of meters shall be fixed in separate meter boxes in the same proximity.",
-    yPos
-  ) + 2;
-
-  yPos = addSubsection(
-    "8.5",
     "The Licensee shall issue monthly electricity bill for the net metered energy on the scheduled date of meter reading. If the exported energy exceeds the imported energy, the Licensee shall show the net energy exported as credited Units of electricity as specified in the Grid Interactive Renewable Energy Systems Regulations, 2019. If the exported energy is less than the imported energy, the Eligible Consumer shall pay the Distribution Licensee for the net energy imported at the prevailing tariff approved by the Commission for the consumer category to which he belongs.",
     yPos
   ) + 5;
@@ -339,12 +333,12 @@ export const generateNetMeter = async (
   
   // Add customer signature in the first left box
   if (data.customerSignature) {
-    imagePromises.push(addImageWithFixedSize(doc, data.customerSignature, leftBoxX, yPos - 40, 50, 25));
+    imagePromises.push(addImageWithFixedSize(doc, data.customerSignature, leftBoxX, yPos - 45, 50, 25));
   }
   
   // Add company stamp in the first right box
   if (data.companyStamp) {
-    imagePromises.push(addImageWithFixedSize(doc, data.companyStamp, leftBoxX, yPos - 5 , 50, 25));
+    imagePromises.push(addImageWithFixedSize(doc, data.companyStamp, leftBoxX, yPos - 15 , 50, 25));
   }
   
 

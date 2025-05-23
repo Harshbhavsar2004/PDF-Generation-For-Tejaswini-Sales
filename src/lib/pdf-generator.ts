@@ -38,7 +38,7 @@ export const generatePDF = async (data: FormData, type: string, shouldDownload: 
   doc.setFont("helvetica", "normal")
   doc.setTextColor(100, 100, 100)
   doc.text(`Location: ${data.installerAddress}`, pageWidth / 2, margin + 18, { align: "center" })
-  doc.text(`Mobile No: ${data.installerContact}`, pageWidth / 2, margin + 24, { align: "center" })
+  doc.text(`Mobile No: e${data.installerContact}`, pageWidth / 2, margin + 24, { align: "center" })
 
   // Decorative line
   doc.setDrawColor(secondaryColor[0], secondaryColor[1], secondaryColor[2])

@@ -126,6 +126,17 @@ export default function SolarForm({ formData, onChange }) {
               className="w-full p-2 border rounded-md"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Total Cost (₹)</label>
+            <input
+              type="text"
+              name="totalCost"
+              value={formData.totalCost}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md"
+              placeholder="Enter total cost in rupees"
+            />
+          </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">Installation Address</label>
             <textarea

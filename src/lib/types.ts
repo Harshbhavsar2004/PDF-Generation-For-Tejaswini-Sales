@@ -51,6 +51,8 @@ export interface FormData {
     systemCapacity: string
     vendorName: string
     msedclRepresentative: string
+    // Additional fields for model agreement
+    totalCost: string
 }
   
   

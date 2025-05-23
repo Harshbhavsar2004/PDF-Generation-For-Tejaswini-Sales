@@ -6,6 +6,8 @@ import { generateDCR } from "@/lib/generate-dcr"
 import { generateWCR } from "@/lib/generate-wcr"
 import { generateHypothecation } from "@/lib/generate-hypothecation"
 import { generateNetMeter } from "@/lib/generate-net-meter"
+import { generateModelAgreement } from "@/lib/generate-modelaggrement"
+
 
 export default function Multipurpose() {
   const [formData, setFormData] = useState({
@@ -54,13 +56,15 @@ export default function Multipurpose() {
     customerSignature: "",
     vendorSignature: "",
     companyStamp: "",
+    totalCost: "",
   })
 
   const [previewUrls, setPreviewUrls] = useState({
     dcr: null,
     wcr: null,
     hypothecation: null,
-    netMeter: null
+    netMeter: null,
+    modelAgreement: null
   })
 
   const handleFormChange = (data) => {
@@ -126,6 +130,17 @@ export default function Multipurpose() {
     }
   }
 
+  const handlePreviewModelAgreement = async (e) => {
+    e.preventDefault()
+    try {
+      const pdfBlob = await generateModelAgreement(formData, false)
+      const url = URL.createObjectURL(pdfBlob)
+      setPreviewUrls(prev => ({ ...prev, modelAgreement: url }))
+    } catch (error) {
+      console.error('Error generating Model Agreement preview:', error)
+    }
+  }
+
   const handleGenerateDCR = async (e) => {
     e.preventDefault()
     try {
@@ -174,6 +189,15 @@ export default function Multipurpose() {
       }, true)
     } catch (error) {
       console.error('Error downloading Net Meter:', error)
+    }
+  }
+
+  const handleGenerateModelAgreement = async (e) => {
+    e.preventDefault()
+    try {
+      await generateModelAgreement(formData, true)
+    } catch (error) {
+      console.error('Error downloading Model Agreement:', error)
     }
   }
 
@@ -312,6 +336,39 @@ export default function Multipurpose() {
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-500">
                   Click "Preview Net Meter" to see the document here
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Model Agreement Section */}
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-2">
+              <button
+                onClick={handlePreviewModelAgreement}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+              >
+                Preview Model Agreement
+              </button>
+              <button
+                onClick={handleGenerateModelAgreement}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+              >
+                Download Model Agreement
+              </button>
+            </div>
+            <div className="h-[500px] border rounded-md p-2">
+              {previewUrls.modelAgreement ? (
+                <object
+                  data={previewUrls.modelAgreement}
+                  type="application/pdf"
+                  className="w-full h-full"
+                >
+                  <p>Unable to display PDF preview.</p>
+                </object>
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  Click "Preview Model Agreement" to see the document here
                 </div>
               )}
             </div>
