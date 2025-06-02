@@ -15,6 +15,28 @@ mongoose.connect('mongodb+srv://hbhavsar847:kEhxUPxuVXYrtHb4@cluster0.qxhmi5c.mo
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to Solar Installation Forms API',
+    version: '1.0.0',
+    endpoints: {
+      workCompletion: {
+        base: '/api/work-completion',
+        methods: ['GET', 'POST', 'DELETE'],
+        description: 'Work Completion Report form endpoints'
+      },
+      multiPurpose: {
+        base: '/api/multi-purpose',
+        methods: ['GET', 'POST', 'DELETE'],
+        description: 'Multi-Purpose form endpoints'
+      }
+    },
+    status: 'Server is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
 const workCompletionRoutes = require('./routes/workCompletion');
 const multiPurposeFormRoutes = require('./routes/multiPurposeForm');
