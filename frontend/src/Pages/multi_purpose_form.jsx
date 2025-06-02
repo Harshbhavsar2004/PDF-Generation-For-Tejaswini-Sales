@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import SolarForm from "@/components/solar-form";
 import { generateDCR } from "@/lib/generate-dcr";
 import { generateWCR } from "@/lib/generate-wcr";
@@ -105,19 +105,26 @@ export default function Multipurpose() {
   }, []);
 
   const fetchSavedForms = async () => {
+    if (!mounted) return;
+    
     setIsLoading(true);
     try {
       const response = await fetch(`${API_URL}/multi-purpose`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch forms');
+      }
       const data = await response.json();
-      setSavedForms(data);
+      // Make sure we're setting an array
+      setSavedForms(Array.isArray(data.forms) ? data.forms : []);
+      setTotalPages(data.pagination?.totalPages || 1);
     } catch (error) {
-      console.error('Error fetching forms:', error);
-      setSubmitError('Failed to fetch forms');
+      console.error("Error fetching forms:", error);
+      setSubmitError("Failed to fetch forms");
+      setSavedForms([]); // Set empty array on error
     } finally {
       setIsLoading(false);
     }
   };
-
 
   const handleFormChange = useCallback((data) => {
     setFormData((prev) => {
@@ -401,12 +408,15 @@ export default function Multipurpose() {
     }
   };
 
-  const filteredForms = savedForms.filter(
-    (form) =>
-      form.consumerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      form.consumerNumber.includes(searchQuery) ||
-      form.mobileNumber.includes(searchQuery)
-  );
+  const filteredForms = useMemo(() => {
+    if (!Array.isArray(savedForms)) return [];
+    return savedForms.filter(
+      (form) =>
+        form?.consumerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        form?.consumerNumber?.includes(searchQuery) ||
+        form?.mobileNumber?.includes(searchQuery)
+    );
+  }, [savedForms, searchQuery]);
 
   const getFormStats = () => {
     const totalForms = savedForms.length;
@@ -452,7 +462,9 @@ export default function Multipurpose() {
           <div className="mx-auto w-full max-w-sm lg:max-w-md">
             <DrawerHeader>
               <DrawerTitle>Saved Forms</DrawerTitle>
-              <DrawerDescription>Page {currentPage} of {totalPages}</DrawerDescription>
+              <DrawerDescription>
+                {isLoading ? "Loading..." : `Showing ${filteredForms.length} forms`}
+              </DrawerDescription>
             </DrawerHeader>
             <div className="p-4 pb-0">
               <div className="relative mb-4">
@@ -472,58 +484,45 @@ export default function Multipurpose() {
                     {searchQuery ? "No forms found" : "No forms saved yet"}
                   </div>
                 ) : (
-                  <>
-                    {filteredForms.map((form) => (
-                      <div
-                        key={form._id}
-                        className={`p-3 rounded-lg border ${
-                          selectedFormId === form._id
-                            ? "border-purple-500 bg-purple-50"
-                            : "border-gray-200 hover:border-purple-300"
-                        }`}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div
-                            className="flex-1 cursor-pointer"
-                            onClick={() => {
-                              loadForm(form._id);
-                              setIsDrawerOpen(false);
-                            }}
-                          >
-                            <div className="font-medium">{form.consumerName}</div>
-                            <div className="text-sm text-gray-500">
-                              {form.consumerNumber}
-                            </div>
-                            <div className="text-xs text-gray-400 mt-1">
-                              {new Date(form.createdAt).toLocaleDateString()}
-                            </div>
+                  filteredForms.map((form) => (
+                    <div
+                      key={form._id}
+                      className={`p-3 rounded-lg border ${
+                        selectedFormId === form._id
+                          ? "border-purple-500 bg-purple-50"
+                          : "border-gray-200 hover:border-purple-300"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div
+                          className="flex-1 cursor-pointer"
+                          onClick={() => {
+                            loadForm(form._id);
+                            setIsDrawerOpen(false);
+                          }}
+                        >
+                          <div className="font-medium">{form.consumerName}</div>
+                          <div className="text-sm text-gray-500">
+                            {form.consumerNumber}
                           </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete(form._id)}
-                              title="Delete"
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                          <div className="text-xs text-gray-400 mt-1">
+                            {new Date(form.createdAt).toLocaleDateString()}
                           </div>
                         </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(form._id)}
+                            title="Delete"
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-                    ))}
-                    {currentPage < totalPages && (
-                      <div className="text-center py-4">
-                        <Button
-                          variant="outline"
-                          onClick={loadMoreForms}
-                          disabled={isLoadingMore}
-                        >
-                          {isLoadingMore ? "Loading..." : "Load More"}
-                        </Button>
-                      </div>
-                    )}
-                  </>
+                    </div>
+                  ))
                 )}
               </div>
             </div>
