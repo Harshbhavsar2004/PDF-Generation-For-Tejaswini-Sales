@@ -120,12 +120,9 @@ export default function Multipurpose() {
 
   const handleFormChange = useCallback((data) => {
     setFormData((prev) => {
-      const newData = { ...prev, ...data };
-      // Clean up any undefined or null values
-      Object.keys(newData).forEach(key => {
-        if (newData[key] === undefined || newData[key] === null) {
-          newData[key] = "";
-        }
+      const newData = { ...prev };
+      Object.keys(data).forEach(key => {
+        newData[key] = data[key] ?? "";
       });
       return newData;
     });
@@ -443,7 +440,7 @@ export default function Multipurpose() {
             Saved Forms
           </Button>
         </DrawerTrigger>
-        <DrawerContent className="">
+        <DrawerContent>
           <div className="mx-auto w-full max-w-sm lg:max-w-md">
             <DrawerHeader>
               <DrawerTitle>Saved Forms</DrawerTitle>
@@ -517,7 +514,7 @@ export default function Multipurpose() {
           </div>
         </DrawerContent>
       </Drawer>
-      <div className=" mx-2">
+      <div className="mx-2">
         <Card className="lg:col-span-7">
           <CardHeader>
             <CardTitle>Solar Installation Document Generator</CardTitle>
@@ -532,7 +529,7 @@ export default function Multipurpose() {
                   {submitError}
                 </div>
               )}
-              <SolarForm formData={formData} />
+              <SolarForm formData={formData} onChange={handleFormChange} />
             </CardContent>
             <CardFooter className="flex gap-4 mt-2">
               <Button type="submit" disabled={isLoading}>
