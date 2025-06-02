@@ -24,10 +24,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-// MongoDB Connection
-mongoose.connect('mongodb+srv://hbhavsar847:juRVgxPiEEbQKKNx@cluster0.a8bkbxu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Root route
 app.get('/', (req, res) => {
