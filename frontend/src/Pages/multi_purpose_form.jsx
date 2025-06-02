@@ -102,49 +102,22 @@ export default function Multipurpose() {
 
   useEffect(() => {
     setMounted(true);
-    fetchSavedForms();
-  }, [currentPage]);
+  }, []);
 
   const fetchSavedForms = async () => {
-    if (!mounted) return;
-    
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_URL}/multi-purpose?page=${currentPage}&limit=10`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch forms');
-      }
+      const response = await fetch(`${API_URL}/multi-purpose`);
       const data = await response.json();
-      setSavedForms(data.forms);
-      setTotalPages(data.pagination.totalPages);
+      setSavedForms(data);
     } catch (error) {
-      console.error("Error fetching forms:", error);
-      setSubmitError("Failed to fetch forms");
+      console.error('Error fetching forms:', error);
+      setSubmitError('Failed to fetch forms');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const loadMoreForms = async () => {
-    if (currentPage >= totalPages || isLoadingMore) return;
-    
-    setIsLoadingMore(true);
-    try {
-      const nextPage = currentPage + 1;
-      const response = await fetch(`${API_URL}/multi-purpose?page=${nextPage}&limit=10`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch more forms');
-      }
-      const data = await response.json();
-      setSavedForms(prev => [...prev, ...data.forms]);
-      setCurrentPage(nextPage);
-    } catch (error) {
-      console.error("Error loading more forms:", error);
-      setSubmitError("Failed to load more forms");
-    } finally {
-      setIsLoadingMore(false);
-    }
-  };
 
   const handleFormChange = useCallback((data) => {
     setFormData((prev) => {
@@ -461,6 +434,13 @@ export default function Multipurpose() {
 
   return (
     <div className="container mx-auto py-10">
+      <Button 
+        variant="outline" 
+        className="mb-4 ml-2" 
+        onClick={() => fetchSavedForms()}
+      >
+        Fetch Saved Forms
+      </Button>
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerTrigger asChild>
           <Button variant="outline" className="mb-4 ml-2">
