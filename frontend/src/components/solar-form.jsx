@@ -1,9 +1,6 @@
 "use client"
 
-import React from "react"
-
-import { useState, useEffect } from "react"
-
+import React, { useState, useEffect, useCallback } from "react"
 
 export default function SolarForm({ formData, onChange }) {
   const [activeTab, setActiveTab] = useState(0)
@@ -11,10 +8,12 @@ export default function SolarForm({ formData, onChange }) {
 
   // Update serial number fields when number of modules changes
   useEffect(() => {
+    if (!formData?.numberOfModules) return;
+    
     const numModules = Number.parseInt(formData.numberOfModules) || 0
     if (numModules > 0) {
       // Create or adjust array of serial numbers
-      const currentSerials = [...formData.moduleSerialNumbers]
+      const currentSerials = [...(formData.moduleSerialNumbers || [])]
       const newSerials = [...currentSerials]
 
       // Expand array if needed
@@ -28,34 +27,34 @@ export default function SolarForm({ formData, onChange }) {
       }
 
       if (JSON.stringify(currentSerials) !== JSON.stringify(newSerials)) {
-        onChange({ moduleSerialNumbers: newSerials })
+        onChange?.({ moduleSerialNumbers: newSerials })
       }
     }
-  }, [formData.numberOfModules])
+  }, [formData?.numberOfModules, onChange])
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target
-    onChange({ [name]: value })
-  }
+    onChange?.({ [name]: value })
+  }, [onChange])
 
-  const handleSerialNumberChange = (index, value) => {
-    const updatedSerialNumbers = [...formData.moduleSerialNumbers]
+  const handleSerialNumberChange = useCallback((index, value) => {
+    const updatedSerialNumbers = [...(formData.moduleSerialNumbers || [])]
     updatedSerialNumbers[index] = value
-    onChange({ moduleSerialNumbers: updatedSerialNumbers })
-  }
+    onChange?.({ moduleSerialNumbers: updatedSerialNumbers })
+  }, [formData?.moduleSerialNumbers, onChange])
 
-  const handleAadharImageChange = (e) => {
+  const handleAadharImageChange = useCallback((e) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onload = (event) => {
         const result = event.target?.result
         setAadharPreview(result)
-        onChange({ aadharImage: result })
+        onChange?.({ aadharImage: result })
       }
       reader.readAsDataURL(file)
     }
-  }
+  }, [onChange])
 
   const tabs = [
     { name: "Basic Information", id: "basic" },
@@ -73,6 +72,7 @@ export default function SolarForm({ formData, onChange }) {
           {tabs.map((tab, index) => (
             <button
               key={tab.id}
+              type="button"
               className={`inline-block p-4 border-b-2 ${
                 activeTab === index ? "border-blue-600 text-blue-600" : "border-transparent hover:border-gray-300"
               }`}
@@ -91,7 +91,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="consumerName"
-              value={formData.consumerName}
+              value={formData?.consumerName || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -101,7 +101,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="consumerNumber"
-              value={formData.consumerNumber}
+              value={formData?.consumerNumber || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -111,7 +111,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="mobileNumber"
-              value={formData.mobileNumber}
+              value={formData?.mobileNumber || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -121,7 +121,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="email"
               name="email"
-              value={formData.email}
+              value={formData?.email || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -131,7 +131,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="totalCost"
-              value={formData.totalCost}
+              value={formData?.totalCost || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
               placeholder="Enter total cost in rupees"
@@ -141,7 +141,7 @@ export default function SolarForm({ formData, onChange }) {
             <label className="block text-sm font-medium mb-1">Installation Address</label>
             <textarea
               name="address"
-              value={formData.address}
+              value={formData?.address || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
               rows={3}
@@ -151,7 +151,7 @@ export default function SolarForm({ formData, onChange }) {
             <label className="block text-sm font-medium mb-1">RE Arrangement Type</label>
             <select
               name="reArrangementType"
-              value={formData.reArrangementType}
+              value={formData?.reArrangementType || "Net Metering Arrangement"}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             >
@@ -163,7 +163,7 @@ export default function SolarForm({ formData, onChange }) {
             <label className="block text-sm font-medium mb-1">RE Source</label>
             <select
               name="reSource"
-              value={formData.reSource}
+              value={formData?.reSource || "solar"}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             >
@@ -177,7 +177,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="sanctionedCapacity"
-              value={formData.sanctionedCapacity}
+              value={formData?.sanctionedCapacity || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -186,7 +186,7 @@ export default function SolarForm({ formData, onChange }) {
             <label className="block text-sm font-medium mb-1">Capacity Type</label>
             <select
               name="capacityType"
-              value={formData.capacityType}
+              value={formData?.capacityType || "single phase"}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             >
@@ -199,7 +199,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="aadharNumber"
-              value={formData.aadharNumber}
+              value={formData?.aadharNumber || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -208,7 +208,7 @@ export default function SolarForm({ formData, onChange }) {
             <label className="block text-sm font-medium mb-1">Category</label>
             <select
               name="category"
-              value={formData.category}
+              value={formData?.category || "Private"}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             >
@@ -226,7 +226,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="projectModel"
-              value={formData.projectModel}
+              value={formData?.projectModel || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -236,7 +236,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="installedCapacityRooftop"
-              value={formData.installedCapacityRooftop}
+              value={formData?.installedCapacityRooftop || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -246,7 +246,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="installedCapacityTotal"
-              value={formData.installedCapacityTotal}
+              value={formData?.installedCapacityTotal || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -256,7 +256,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="installedCapacityGround"
-              value={formData.installedCapacityGround}
+              value={formData?.installedCapacityGround || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -266,7 +266,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="date"
               name="installationDate"
-              value={formData.installationDate}
+              value={formData?.installationDate || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -276,7 +276,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="inverterCapacity"
-              value={formData.inverterCapacity}
+              value={formData?.inverterCapacity || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -286,7 +286,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="inverterMake"
-              value={formData.inverterMake}
+              value={formData?.inverterMake || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -296,7 +296,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="inverterModel"
-              value={formData.inverterModel}
+              value={formData?.inverterModel || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -306,7 +306,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="inverterRating"
-              value={formData.inverterRating}
+              value={formData?.inverterRating || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -316,7 +316,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="chargeControllerType"
-              value={formData.chargeControllerType}
+              value={formData?.chargeControllerType || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -326,7 +326,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="earthingCount"
-              value={formData.earthingCount}
+              value={formData?.earthingCount || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -335,7 +335,7 @@ export default function SolarForm({ formData, onChange }) {
             <label className="block text-sm font-medium mb-1">Lightning Arrester</label>
             <select
               name="lightningArrester"
-              value={formData.lightningArrester}
+              value={formData?.lightningArrester || "Yes"}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             >
@@ -348,7 +348,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="manufacturingYear"
-              value={formData.manufacturingYear}
+              value={formData?.manufacturingYear || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -358,7 +358,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="warrantyDetails"
-              value={formData.warrantyDetails}
+              value={formData?.warrantyDetails || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -368,7 +368,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="sanctionNumber"
-              value={formData.sanctionNumber}
+              value={formData?.sanctionNumber || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -383,7 +383,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="number"
               name="numberOfModules"
-              value={formData.numberOfModules}
+              value={formData?.numberOfModules || "1"}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
               min="1"
@@ -394,7 +394,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="moduleCapacity"
-              value={formData.moduleCapacity}
+              value={formData?.moduleCapacity || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -404,7 +404,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="moduleManufacturer"
-              value={formData.moduleManufacturer}
+              value={formData?.moduleManufacturer || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -414,7 +414,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="moduleWattage"
-              value={formData.moduleWattage}
+              value={formData?.moduleWattage || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -422,7 +422,7 @@ export default function SolarForm({ formData, onChange }) {
           <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">Module Serial Numbers</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              {formData.moduleSerialNumbers.map((serial, index) => (
+              {formData?.moduleSerialNumbers.map((serial, index) => (
                 <input
                   key={index}
                   type="text"
@@ -439,7 +439,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="cellManufacturer"
-              value={formData.cellManufacturer}
+              value={formData?.cellManufacturer || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -449,7 +449,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="cellGSTInvoice"
-              value={formData.cellGSTInvoice}
+              value={formData?.cellGSTInvoice || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -459,7 +459,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="date"
               name="cellGSTDate"
-              value={formData.cellGSTDate}
+              value={formData?.cellGSTDate || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -474,7 +474,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="companyName"
-              value={formData.companyName}
+              value={formData?.companyName || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -484,7 +484,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="installerName"
-              value={formData.installerName}
+              value={formData?.installerName || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -494,7 +494,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="installerDesignation"
-              value={formData.installerDesignation}
+              value={formData?.installerDesignation || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -504,7 +504,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="installerPhone"
-              value={formData.installerPhone}
+              value={formData?.installerPhone || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -514,7 +514,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="email"
               name="installerEmail"
-              value={formData.installerEmail}
+              value={formData?.installerEmail || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -529,7 +529,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="msedclOfficerName"
-              value={formData.msedclOfficerName}
+              value={formData?.msedclOfficerName || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -539,7 +539,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="text"
               name="msedclOfficerDesignation"
-              value={formData.msedclOfficerDesignation}
+              value={formData?.msedclOfficerDesignation || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -549,7 +549,7 @@ export default function SolarForm({ formData, onChange }) {
             <input
               type="date"
               name="msedclInspectionDate"
-              value={formData.msedclInspectionDate}
+              value={formData?.msedclInspectionDate || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
             />
@@ -586,14 +586,14 @@ export default function SolarForm({ formData, onChange }) {
                 if (file) {
                   const reader = new FileReader()
                   reader.onload = (event) => {
-                    onChange({ customerSignature: event.target?.result})
+                    onChange?.({ customerSignature: event.target?.result})
                   }
                   reader.readAsDataURL(file)
                 }
               }}
               className="w-full p-2 border rounded-md"
             />
-            {formData.customerSignature && (
+            {formData?.customerSignature && (
               <div className="mt-2">
                 <p className="text-sm font-medium mb-1">Preview:</p>
                 <div className="border rounded-md p-2 max-w-xs">
@@ -616,14 +616,14 @@ export default function SolarForm({ formData, onChange }) {
                 if (file) {
                   const reader = new FileReader()
                   reader.onload = (event) => {
-                    onChange({ vendorSignature: event.target?.result })
+                    onChange?.({ vendorSignature: event.target?.result })
                   }
                   reader.readAsDataURL(file)
                 }
               }}
               className="w-full p-2 border rounded-md"
             />
-            {formData.vendorSignature && (
+            {formData?.vendorSignature && (
               <div className="mt-2">
                 <p className="text-sm font-medium mb-1">Preview:</p>
                 <div className="border rounded-md p-2 max-w-xs">
@@ -646,14 +646,14 @@ export default function SolarForm({ formData, onChange }) {
                 if (file) {
                   const reader = new FileReader()
                   reader.onload = (event) => {
-                    onChange({ companyStamp: event.target?.result})
+                    onChange?.({ companyStamp: event.target?.result})
                   }
                   reader.readAsDataURL(file)
                 }
               }}
               className="w-full p-2 border rounded-md"
             />
-            {formData.companyStamp && (
+            {formData?.companyStamp && (
               <div className="mt-2">
                 <p className="text-sm font-medium mb-1">Preview:</p>
                 <div className="border rounded-md p-2 max-w-xs">
