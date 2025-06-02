@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import SolarForm from "@/components/solar-form";
 import { generateDCR } from "@/lib/generate-dcr";
 import { generateWCR } from "@/lib/generate-wcr";
@@ -31,56 +31,57 @@ import {
 
 const API_URL = "https://pdf-generation-by-tejaswini-solar-s.vercel.app/api";
 
-export default function Multipurpose() {
-  const [formData, setFormData] = useState({
-    consumerName: "",
-    consumerNumber: "",
-    mobileNumber: "",
-    email: "",
-    address: "",
-    reArrangementType: "Net Metering Arrangement",
-    reSource: "solar",
-    sanctionedCapacity: "",
-    capacityType: "single phase",
-    projectModel: "NA",
-    installedCapacityRooftop: "",
-    installedCapacityTotal: "NA",
-    installedCapacityGround: "NA",
-    installationDate: "",
-    inverterCapacity: "",
-    inverterMake: "",
-    numberOfModules: "",
-    moduleCapacity: "",
-    category: "Private",
-    warrantyDetails: "30 Years",
-    sanctionNumber: "",
-    moduleManufacturer: "",
-    moduleWattage: "",
-    moduleSerialNumbers: ["", "", "", "", "", ""],
-    inverterModel: "",
-    inverterRating: "5 star",
-    chargeControllerType: "1mppt",
-    earthingCount: "3",
-    lightningArrester: "Yes",
-    manufacturingYear: new Date().getFullYear().toString(),
-    aadharNumber: "",
-    cellManufacturer: "",
-    cellGSTInvoice: "",
-    cellGSTDate: "",
-    installerName: "",
-    installerDesignation: "",
-    installerPhone: "",
-    installerEmail: "",
-    companyName: "",
-    msedclOfficerName: "",
-    msedclOfficerDesignation: "",
-    msedclInspectionDate: "",
-    customerSignature: "",
-    vendorSignature: "",
-    companyStamp: "",
-    totalCost: "",
-  });
+const initialFormData = {
+  consumerName: "",
+  consumerNumber: "",
+  mobileNumber: "",
+  email: "",
+  address: "",
+  reArrangementType: "Net Metering Arrangement",
+  reSource: "solar",
+  sanctionedCapacity: "",
+  capacityType: "single phase",
+  projectModel: "NA",
+  installedCapacityRooftop: "",
+  installedCapacityTotal: "NA",
+  installedCapacityGround: "NA",
+  installationDate: "",
+  inverterCapacity: "",
+  inverterMake: "",
+  numberOfModules: "",
+  moduleCapacity: "",
+  category: "Private",
+  warrantyDetails: "30 Years",
+  sanctionNumber: "",
+  moduleManufacturer: "",
+  moduleWattage: "",
+  moduleSerialNumbers: ["", "", "", "", "", ""],
+  inverterModel: "",
+  inverterRating: "5 star",
+  chargeControllerType: "1mppt",
+  earthingCount: "3",
+  lightningArrester: "Yes",
+  manufacturingYear: new Date().getFullYear().toString(),
+  aadharNumber: "",
+  cellManufacturer: "",
+  cellGSTInvoice: "",
+  cellGSTDate: "",
+  installerName: "",
+  installerDesignation: "",
+  installerPhone: "",
+  installerEmail: "",
+  companyName: "",
+  msedclOfficerName: "",
+  msedclOfficerDesignation: "",
+  msedclInspectionDate: "",
+  customerSignature: "",
+  vendorSignature: "",
+  companyStamp: "",
+  totalCost: "",
+};
 
+export default function Multipurpose() {
+  const [formData, setFormData] = useState(initialFormData);
   const [previewUrls, setPreviewUrls] = useState({
     dcr: null,
     wcr: null,
@@ -88,21 +89,22 @@ export default function Multipurpose() {
     netMeter: null,
     modelAgreement: null,
   });
-
   const [savedForms, setSavedForms] = useState([]);
   const [selectedFormId, setSelectedFormId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
-
-  // Add new state for drawer
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     fetchSavedForms();
   }, []);
 
   const fetchSavedForms = async () => {
+    if (!mounted) return;
+    
     setIsLoading(true);
     try {
       const response = await fetch(`${API_URL}/multi-purpose`);
@@ -116,17 +118,27 @@ export default function Multipurpose() {
     }
   };
 
-  const handleFormChange = (data) => {
-    setFormData((prev) => ({ ...prev, ...data }));
-  };
+  const handleFormChange = useCallback((data) => {
+    setFormData((prev) => {
+      const newData = { ...prev, ...data };
+      // Clean up any undefined or null values
+      Object.keys(newData).forEach(key => {
+        if (newData[key] === undefined || newData[key] === null) {
+          newData[key] = "";
+        }
+      });
+      return newData;
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!mounted) return;
+
     setSubmitError("");
     setIsLoading(true);
 
     try {
-      // Validate required fields before submission
       const requiredFields = [
         'consumerName',
         'consumerNumber',
@@ -151,6 +163,8 @@ export default function Multipurpose() {
       const missingFields = requiredFields.filter(field => !formData[field]);
       
       if (missingFields.length > 0) {
+        setSubmitError(`Please fill in all required fields: ${missingFields.join(', ')}`);
+        setIsLoading(false);
         return;
       }
 
@@ -171,56 +185,7 @@ export default function Multipurpose() {
       await fetchSavedForms();
       setSelectedFormId(data._id);
       setSubmitError("");
-      
-      // Reset form data after successful submission
-      setFormData({
-        consumerName: "",
-        consumerNumber: "",
-        mobileNumber: "",
-        email: "",
-        address: "",
-        reArrangementType: "Net Metering Arrangement",
-        reSource: "solar",
-        sanctionedCapacity: "",
-        capacityType: "single phase",
-        projectModel: "NA",
-        installedCapacityRooftop: "",
-        installedCapacityTotal: "NA",
-        installedCapacityGround: "NA",
-        installationDate: "",
-        inverterCapacity: "",
-        inverterMake: "",
-        numberOfModules: "",
-        moduleCapacity: "",
-        category: "Private",
-        warrantyDetails: "30 Years",
-        sanctionNumber: "",
-        moduleManufacturer: "",
-        moduleWattage: "",
-        moduleSerialNumbers: ["", "", "", "", "", ""],
-        inverterModel: "",
-        inverterRating: "5 star",
-        chargeControllerType: "1mppt",
-        earthingCount: "3",
-        lightningArrester: "Yes",
-        manufacturingYear: new Date().getFullYear().toString(),
-        aadharNumber: "",
-        cellManufacturer: "",
-        cellGSTInvoice: "",
-        cellGSTDate: "",
-        installerName: "",
-        installerDesignation: "",
-        installerPhone: "",
-        installerEmail: "",
-        companyName: "",
-        msedclOfficerName: "",
-        msedclOfficerDesignation: "",
-        msedclInspectionDate: "",
-        customerSignature: "",
-        vendorSignature: "",
-        companyStamp: "",
-        totalCost: "",
-      });
+      setFormData(initialFormData);
     } catch (error) {
       console.error("Error saving form:", error);
       setSubmitError(error.message || "Failed to save form");
@@ -247,54 +212,7 @@ export default function Multipurpose() {
       await fetchSavedForms();
       if (selectedFormId === formId) {
         setSelectedFormId(null);
-        setFormData({
-          consumerName: "",
-          consumerNumber: "",
-          mobileNumber: "",
-          email: "",
-          address: "",
-          reArrangementType: "Net Metering Arrangement",
-          reSource: "solar",
-          sanctionedCapacity: "",
-          capacityType: "single phase",
-          projectModel: "NA",
-          installedCapacityRooftop: "",
-          installedCapacityTotal: "NA",
-          installedCapacityGround: "NA",
-          installationDate: "",
-          inverterCapacity: "",
-          inverterMake: "",
-          numberOfModules: "",
-          moduleCapacity: "",
-          category: "Private",
-          warrantyDetails: "30 Years",
-          sanctionNumber: "",
-          moduleManufacturer: "",
-          moduleWattage: "",
-          moduleSerialNumbers: ["", "", "", "", "", ""],
-          inverterModel: "",
-          inverterRating: "5 star",
-          chargeControllerType: "1mppt",
-          earthingCount: "3",
-          lightningArrester: "Yes",
-          manufacturingYear: new Date().getFullYear().toString(),
-          aadharNumber: "",
-          cellManufacturer: "",
-          cellGSTInvoice: "",
-          cellGSTDate: "",
-          installerName: "",
-          installerDesignation: "",
-          installerPhone: "",
-          installerEmail: "",
-          companyName: "",
-          msedclOfficerName: "",
-          msedclOfficerDesignation: "",
-          msedclInspectionDate: "",
-          customerSignature: "",
-          vendorSignature: "",
-          companyStamp: "",
-          totalCost: "",
-        });
+        setFormData(initialFormData);
       }
     } catch (error) {
       console.error("Error deleting form:", error);
@@ -320,83 +238,102 @@ export default function Multipurpose() {
     }
   };
 
-  const handlePreviewDCR = async (e) => {
+  const handlePreviewDCR = useCallback(async (e) => {
     e.preventDefault();
+    if (!mounted) return;
+
     try {
       const pdfBlob = await generateDCR(formData, false);
-      const url = URL.createObjectURL(pdfBlob);
-      setPreviewUrls((prev) => ({ ...prev, dcr: url }));
+      if (pdfBlob) {
+        const url = URL.createObjectURL(pdfBlob);
+        setPreviewUrls((prev) => ({ ...prev, dcr: url }));
+      }
     } catch (error) {
       console.error("Error generating DCR preview:", error);
       setSubmitError("Failed to generate DCR preview");
     }
-  };
+  }, [formData, mounted]);
 
-  const handlePreviewWCR = async (e) => {
+  const handlePreviewWCR = useCallback(async (e) => {
     e.preventDefault();
+    if (!mounted) return;
+
     try {
       const pdfBlob = await generateWCR(formData, false);
-      const url = URL.createObjectURL(pdfBlob);
-      setPreviewUrls((prev) => ({ ...prev, wcr: url }));
+      if (pdfBlob) {
+        const url = URL.createObjectURL(pdfBlob);
+        setPreviewUrls((prev) => ({ ...prev, wcr: url }));
+      }
     } catch (error) {
       console.error("Error generating WCR preview:", error);
       setSubmitError("Failed to generate WCR preview");
     }
-  };
+  }, [formData, mounted]);
 
-  const handlePreviewHypothecation = async (e) => {
+  const handlePreviewHypothecation = useCallback(async (e) => {
     e.preventDefault();
+    if (!mounted) return;
+
     try {
       const pdfBlob = await generateHypothecation(formData, false);
-      const url = URL.createObjectURL(pdfBlob);
-      setPreviewUrls((prev) => ({ ...prev, hypothecation: url }));
+      if (pdfBlob) {
+        const url = URL.createObjectURL(pdfBlob);
+        setPreviewUrls((prev) => ({ ...prev, hypothecation: url }));
+      }
     } catch (error) {
       console.error("Error generating Hypothecation preview:", error);
       setSubmitError("Failed to generate Hypothecation preview");
     }
-  };
+  }, [formData, mounted]);
 
-  const handlePreviewNetMeter = async (e) => {
+  const handlePreviewNetMeter = useCallback(async (e) => {
     e.preventDefault();
+    if (!mounted) return;
+
     try {
-      const pdfBlob = await generateNetMeter(
-        {
-          consumerName: formData.consumerName,
-          consumerNumber: formData.consumerNumber,
-          consumerAddress: formData.address,
-          agreementDate: new Date(),
-          systemCapacity: formData.sanctionedCapacity,
-          distributionLicensee: "MSEDCL",
-          distributionOffice: "Dhule",
-          vendorName: formData.companyName,
-          consumerWitness: formData.installerName,
-          msedclRepresentative: formData.msedclOfficerName,
-          msedclWitness: formData.msedclOfficerDesignation,
-          customerSignature: formData.customerSignature,
-          vendorSignature: formData.vendorSignature,
-          companyStamp: formData.companyStamp,
-        },
-        false
-      );
-      const url = URL.createObjectURL(pdfBlob);
-      setPreviewUrls((prev) => ({ ...prev, netMeter: url }));
+      const netMeterData = {
+        consumerName: formData.consumerName || "",
+        consumerNumber: formData.consumerNumber || "",
+        consumerAddress: formData.address || "",
+        agreementDate: new Date(),
+        systemCapacity: formData.sanctionedCapacity || "",
+        distributionLicensee: "MSEDCL",
+        distributionOffice: "Dhule",
+        vendorName: formData.companyName || "",
+        consumerWitness: formData.installerName || "",
+        msedclRepresentative: formData.msedclOfficerName || "",
+        msedclWitness: formData.msedclOfficerDesignation || "",
+        customerSignature: formData.customerSignature || "",
+        vendorSignature: formData.vendorSignature || "",
+        companyStamp: formData.companyStamp || "",
+      };
+
+      const pdfBlob = await generateNetMeter(netMeterData, false);
+      if (pdfBlob) {
+        const url = URL.createObjectURL(pdfBlob);
+        setPreviewUrls((prev) => ({ ...prev, netMeter: url }));
+      }
     } catch (error) {
       console.error("Error generating Net Meter preview:", error);
       setSubmitError("Failed to generate Net Meter preview");
     }
-  };
+  }, [formData, mounted]);
 
-  const handlePreviewModelAgreement = async (e) => {
+  const handlePreviewModelAgreement = useCallback(async (e) => {
     e.preventDefault();
+    if (!mounted) return;
+
     try {
       const pdfBlob = await generateModelAgreement(formData, false);
-      const url = URL.createObjectURL(pdfBlob);
-      setPreviewUrls((prev) => ({ ...prev, modelAgreement: url }));
+      if (pdfBlob) {
+        const url = URL.createObjectURL(pdfBlob);
+        setPreviewUrls((prev) => ({ ...prev, modelAgreement: url }));
+      }
     } catch (error) {
       console.error("Error generating Model Agreement preview:", error);
       setSubmitError("Failed to generate Model Agreement preview");
     }
-  };
+  }, [formData, mounted]);
 
   const handleGenerateDCR = async (e) => {
     e.preventDefault();
@@ -473,7 +410,6 @@ export default function Multipurpose() {
       form.mobileNumber.includes(searchQuery)
   );
 
-  // Add function to get form statistics
   const getFormStats = () => {
     const totalForms = savedForms.length;
     const formsByMonth = savedForms.reduce((acc, form) => {
@@ -493,6 +429,10 @@ export default function Multipurpose() {
   };
 
   const { totalForms, chartData } = getFormStats();
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -603,7 +543,6 @@ export default function Multipurpose() {
         </Card>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2  gap-4">
-          {/* DCR Section */}
           <div className="flex flex-col gap-4">
             <div className="flex gap-2">
               <button
@@ -636,7 +575,6 @@ export default function Multipurpose() {
             </div>
           </div>
 
-          {/* WCR Section */}
           <div className="flex flex-col gap-4">
             <div className="flex gap-2">
               <button
@@ -669,7 +607,6 @@ export default function Multipurpose() {
             </div>
           </div>
 
-          {/* Hypothecation Section */}
           <div className="flex flex-col gap-4">
             <div className="flex gap-2">
               <button
@@ -702,7 +639,6 @@ export default function Multipurpose() {
             </div>
           </div>
 
-          {/* Net Meter Section */}
           <div className="flex flex-col gap-4">
             <div className="flex gap-2">
               <button
@@ -735,7 +671,6 @@ export default function Multipurpose() {
             </div>
           </div>
 
-          {/* Model Agreement Section */}
           <div className="flex flex-col gap-4">
             <div className="flex gap-2">
               <button
