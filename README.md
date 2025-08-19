@@ -4,34 +4,6 @@ A JavaScript application for generating PDF sales reports, streamlining document
 
 This project simplifies the creation of sales reports in PDF format, catering specifically to the needs of Tejaswini Sales. It leverages JavaScript and potentially a PDF generation library to automate report creation, saving time and improving accuracy.
 
-![License](https://img.shields.io/github/license/Harshbhavsar2004/PDF-Generation-For-Tejaswini-Sales)
-![GitHub stars](https://img.shields.io/github/stars/Harshbhavsar2004/PDF-Generation-For-Tejaswini-Sales?style=social)
-![GitHub forks](https://img.shields.io/github/forks/Harshbhavsar2004/PDF-Generation-For-Tejaswini-Sales?style=social)
-![GitHub issues](https://img.shields.io/github/issues/Harshbhavsar2004/PDF-Generation-For-Tejaswini-Sales)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Harshbhavsar2004/PDF-Generation-For-Tejaswini-Sales)
-![GitHub last commit](https://img.shields.io/github/last-commit/Harshbhavsar2004/PDF-Generation-For-Tejaswini-Sales)
-
-![JavaScript](https://img.shields.io/badge/javascript-%23F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=black)
-![Node.js](https://img.shields.io/badge/node.js-%2343853D.svg?style=for-the-badge&logo=node.js&logoColor=white)
-
-## 📋 Table of Contents
-
-- [About](#about)
-- [Features](#features)
-- [Demo](#demo)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [FAQ](#faq)
-- [License](#license)
-- [Support](#support)
-- [Acknowledgments](#acknowledgments)
-
 ## About
 
 This project is designed to automate the creation of PDF sales reports for Tejaswini Sales. Manually generating these reports can be time-consuming and prone to errors. This application aims to streamline this process, allowing users to quickly and accurately generate professional-looking PDF documents.
