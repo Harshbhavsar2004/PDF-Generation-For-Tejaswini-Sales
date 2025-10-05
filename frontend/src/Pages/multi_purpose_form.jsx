@@ -78,6 +78,7 @@ const initialFormData = {
   vendorSignature: "",
   companyStamp: "",
   totalCost: "",
+  district: "Mumbai", // Added district field
 };
 
 export default function Multipurpose() {
@@ -303,7 +304,7 @@ export default function Multipurpose() {
         agreementDate: new Date(),
         systemCapacity: formData.sanctionedCapacity || "",
         distributionLicensee: "MSEDCL",
-        distributionOffice: "Dhule",
+        district: formData.district || "Dhule", // <-- Use selected district
         vendorName: formData.companyName || "",
         consumerWitness: formData.installerName || "",
         msedclRepresentative: formData.msedclOfficerName || "",
@@ -381,7 +382,7 @@ export default function Multipurpose() {
           agreementDate: new Date(),
           systemCapacity: formData.sanctionedCapacity,
           distributionLicensee: "MSEDCL",
-          distributionOffice: "Dhule",
+          distributionOffice: formData.district || "Dhule", // <-- Use selected district
           vendorName: formData.companyName,
           consumerWitness: formData.installerName,
           msedclRepresentative: formData.msedclOfficerName,
@@ -549,6 +550,20 @@ export default function Multipurpose() {
                   {submitError}
                 </div>
               )}
+              {/* District Select */}
+              <div>
+                <label className="block mb-1 font-medium">District</label>
+                <select
+                  value={formData.district}
+                  onChange={e => setFormData(prev => ({ ...prev, district: e.target.value }))}
+                  className="border rounded px-3 py-2 w-full"
+                  required
+                >
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Palghar">Palghar</option>
+                  <option value="Dhule">Dhule</option>
+                </select>
+              </div>
               <SolarForm formData={formData} onChange={handleFormChange} />
             </CardContent>
             <CardFooter className="flex gap-4 mt-2">

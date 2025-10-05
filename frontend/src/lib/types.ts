@@ -53,6 +53,6 @@ export interface FormData {
     msedclRepresentative: string
     // Additional fields for model agreement
     totalCost: string
+    district: string
 }
-  
-  
+

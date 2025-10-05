@@ -120,7 +120,7 @@ export const generateNetMeter = async (
   let yPos = 250;
   const introText = `This Agreement is made and entered into on the ${formatDate(
     new Date(data.agreementDate)
-  )} at Dhule, between the Eligible Consumer, ${data.consumerName}, residing ${
+  )} at ${data.district}, between the Eligible Consumer, ${data.consumerName}, residing ${
     data.consumerAddress
   } and holding Consumer No: ${
     data.consumerNumber
