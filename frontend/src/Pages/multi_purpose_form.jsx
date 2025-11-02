@@ -79,6 +79,8 @@ const initialFormData = {
   companyStamp: "",
   totalCost: "",
   district: "Mumbai", // Added district field
+  invertercapacity: "",
+  invertermanufacture: "",
 };
 
 export default function Multipurpose() {
