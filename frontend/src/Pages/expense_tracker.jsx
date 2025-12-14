@@ -47,6 +47,74 @@ export default function ExpenseTracker() {
 
   if (!mounted) return null
 
+  const downloadPDF = () => {
+  const doc = new jsPDF()
+
+  // ---------- TITLE ----------
+  doc.setFontSize(18)
+  doc.text("Shared Expense Report", 14, 20)
+
+  doc.setFontSize(11)
+  doc.setTextColor(100)
+  doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 28)
+
+  // ---------- TABLE DATA ----------
+  const tableColumn = [
+    "Date",
+    "Person",
+    "Purpose",
+    "Type",
+    "Amount",
+  ]
+
+  const tableRows = transactions.map((t) => [
+    t.timestamp.toLocaleDateString(),
+    t.person,
+    t.purpose,
+    t.type.toUpperCase(),
+    `${t.type === "credit" ? "+" : "-"}$${t.amount.toFixed(2)}`,
+  ])
+
+  autoTable(doc, {
+    startY: 35,
+    head: [tableColumn],
+    body: tableRows,
+    styles: {
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [99, 102, 241], // Indigo
+    },
+    didDrawPage: (data) => {
+      doc.setFontSize(10)
+      doc.text(
+        `Page ${doc.internal.getNumberOfPages()}`,
+        doc.internal.pageSize.width - 20,
+        doc.internal.pageSize.height - 10
+      )
+    },
+  })
+
+  // ---------- SUMMARY PAGE ----------
+  doc.addPage()
+
+  doc.setFontSize(18)
+  doc.text("Final Summary", 14, 20)
+
+  doc.setFontSize(12)
+  doc.setTextColor(0)
+
+  doc.text(`Total Credits : $${totalCredits.toFixed(2)}`, 14, 40)
+  doc.text(`Total Debits  : $${totalDebits.toFixed(2)}`, 14, 55)
+
+  doc.setFontSize(14)
+  doc.setTextColor(0, 128, 0)
+  doc.text(`Final Balance : $${balance.toFixed(2)}`, 14, 75)
+
+  doc.save("expense-report.pdf")
+}
+
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -97,12 +165,24 @@ export default function ExpenseTracker() {
             <p className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               ${balance.toFixed(2)}
             </p>
-            <Link to="/expense-tracker/new-transaction">
-              <Button size="lg" className="gap-2 shadow-md hover:shadow-lg transition-all">
-                <Plus className="w-5 h-5" />
-                New Transaction
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+  <Link to="/expense-tracker/new-transaction">
+    <Button size="lg" className="gap-2 shadow-md hover:shadow-lg transition-all">
+      <Plus className="w-5 h-5" />
+      New Transaction
+    </Button>
+  </Link>
+
+  <Button
+    size="lg"
+    variant="outline"
+    onClick={downloadPDF}
+    className="gap-2"
+  >
+    Download PDF
+  </Button>
+</div>
+
           </div>
         </Card>
 
