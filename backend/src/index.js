@@ -24,10 +24,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
@@ -47,6 +44,12 @@ app.get('/', (req, res) => {
         methods: ['GET', 'POST', 'DELETE'],
         description: 'Multi-Purpose form endpoints'
       }
+      ,
+      expenses: {
+        base: '/api/expenses',
+        methods: ['GET', 'POST', 'DELETE'],
+        description: 'Shared balance / expense tracker endpoints'
+      }
     },
     status: 'Server is running',
     timestamp: new Date().toISOString()
@@ -56,9 +59,11 @@ app.get('/', (req, res) => {
 // Routes
 const workCompletionRoutes = require('./routes/workCompletion');
 const multiPurposeFormRoutes = require('./routes/multiPurposeForm');
+const expensesRoutes = require('./routes/expenses');
 
 app.use('/api/work-completion', workCompletionRoutes);
 app.use('/api/multi-purpose', multiPurposeFormRoutes);
+app.use('/api/expenses', expensesRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

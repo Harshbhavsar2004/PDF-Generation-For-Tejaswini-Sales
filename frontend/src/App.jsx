@@ -1,88 +1,171 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useLocation,
+} from "react-router-dom"
+
 import WorkCompletionForm from "./Pages/work_completion"
 import MultiPurposeForm from "./Pages/multi_purpose_form"
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
+import ExpenseTracker from "./Pages/expense_tracker"
+import NewTransactionPage from "./Pages/new_transaction/New_transaction"
+import TransactionsPage from "./Pages/transactions/transactions"
+import PartiesPage from "./Pages/parties/Partiespage"
 
-// Home component
+// -------------------- HOME --------------------
 const Home = () => {
   return (
-    <div className="container mx-auto py-10">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-6">Welcome to Solar PDF Generator</h1>
-        <p className="mb-8 text-gray-600">Generate and manage PDF reports efficiently</p>
-        <div className="space-y-4">
-          <div>
-            <Link 
-              to="/generate-report" 
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors inline-block"
-            >
-              Work Completion Report
-            </Link>
-          </div>
-          <div>
-            <Link 
-              to="/multi-purpose" 
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors inline-block"
-            >
-              All Document Types
-            </Link>
-          </div>
+    <div className="bg-gradient-to-b from-purple-50 to-white">
+      
+      {/* HERO */}
+      <section className="container mx-auto px-6 py-24 text-center">
+        <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
+          Manage Solar Reports & Expenses  
+          <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+            Smartly & Professionally
+          </span>
+        </h1>
+
+        <p className="mt-6 text-gray-600 max-w-2xl mx-auto text-lg">
+          Generate work completion PDFs, manage solar documentation,
+          and track shared expenses — all in one simple platform.
+        </p>
+
+        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-6">
+          <Link
+            to="/generate-report"
+            className="px-8 py-4 rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 transition"
+          >
+            Generate Report
+          </Link>
+
+          <Link
+            to="/expense-tracker"
+            className="px-8 py-4 rounded-xl border-2 border-purple-600 text-purple-600 font-semibold hover:bg-purple-50 transition"
+          >
+            Track Expenses
+          </Link>
         </div>
-      </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className="container mx-auto px-6 py-20">
+        <div className="grid md:grid-cols-3 gap-10">
+          
+          <FeatureCard
+            title="Work Completion PDFs"
+            desc="Generate professional solar work completion reports ready for MSEDCL & clients."
+          />
+
+          <FeatureCard
+            title="All Solar Documents"
+            desc="Centralized place for installation, commissioning & multi-purpose PDFs."
+          />
+
+          <FeatureCard
+            title="Shared Expense Tracker"
+            desc="Track credits & debits with parties, purposes & real-time balance."
+          />
+
+        </div>
+      </section>
     </div>
   )
 }
 
-// About component
-const About = () => {
+
+// -------------------- FEATURE CARD --------------------
+const FeatureCard = ({ title, desc }) => {
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">About Us</h1>
-      <p className="text-gray-600">
-        We specialize in providing efficient solutions for generating work completion reports
-        for solar installations. Our system makes it easy to create professional reports
-        with proper formatting and necessary details.
-      </p>
+    <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition">
+      <h3 className="text-xl font-bold mb-3 text-purple-600">
+        {title}
+      </h3>
+      <p className="text-gray-600">{desc}</p>
     </div>
   )
 }
 
-// Navigation component
+
+// -------------------- NAVIGATION --------------------
 const Navigation = () => {
   return (
-    <nav className="bg-white shadow-lg">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex justify-between items-center">
-          <Link to="/" className="text-xl font-bold text-purple-600">
-            Solar PDF Generator
-          </Link>
-          <div className="space-x-6">
-            <Link to="/" className="text-gray-600 hover:text-purple-600">Home</Link>
-            <Link to="/generate-report" className="text-gray-600 hover:text-purple-600">Work Completion</Link>
-            <Link to="/multi-purpose" className="text-gray-600 hover:text-purple-600">All Documents</Link>
-            <Link to="/about" className="text-gray-600 hover:text-purple-600">About</Link>
-          </div>
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur shadow-sm">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link
+          to="/"
+          className="text-2xl font-extrabold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent"
+        >
+          Solar PDF
+        </Link>
+
+        {/* Links */}
+        <div className="hidden md:flex items-center space-x-8">
+          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/generate-report" className="nav-link">Work Completion</Link>
+          <Link to="/multi-purpose" className="nav-link">Documents</Link>
         </div>
+
+        {/* CTA */}
+        <Link
+          to="/expense-tracker"
+          className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-full font-medium hover:opacity-90 transition"
+        >
+          Expense Tracker
+        </Link>
       </div>
     </nav>
   )
 }
 
-export default function App() {
+
+
+// -------------------- LAYOUT (HIDES NAV) --------------------
+const Layout = ({ children }) => {
+  const location = useLocation()
+
+  // Hide navbar on expense-tracker and sub routes
+  const hideNav = location.pathname.startsWith("/expense-tracker")
+
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/generate-report" element={<WorkCompletionForm />} />
-          <Route path="/multi-purpose" element={<MultiPurposeForm/>} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="min-h-screen bg-gray-50">
+      {!hideNav && <Navigation />}
+      {children}
+    </div>
   )
 }
 
+
+// -------------------- APP --------------------
+export default function App() {
+  return (
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/generate-report" element={<WorkCompletionForm />} />
+          <Route path="/multi-purpose" element={<MultiPurposeForm />} />
+          {/* Expense Tracker (NO NAVBAR) */}
+          <Route path="/expense-tracker" element={<ExpenseTracker />} />
+          <Route
+            path="/expense-tracker/new-transaction"
+            element={<NewTransactionPage />}
+          />
+          <Route
+            path="/expense-tracker/transactions"
+            element={<TransactionsPage />}
+          />
+          <Route
+            path="/expense-tracker/parties"
+            element={<PartiesPage />}
+          />
+        </Routes>
+      </Layout>
+    </Router>
+  )
+}
