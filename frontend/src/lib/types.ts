@@ -54,5 +54,7 @@ export interface FormData {
     // Additional fields for model agreement
     totalCost: string
     district: string
+    invertercapacity : string
+    invertermanufacture: string
 }
 

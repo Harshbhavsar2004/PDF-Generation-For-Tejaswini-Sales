@@ -99,7 +99,9 @@ export const generateHypothecation = async (data: FormData, download = false) =>
     body: [
       ["1. PV Module Capacity", `:- ${data.moduleCapacity}`],
       ["2. Number of PV Modules", `:- ${data.numberOfModules}`],
-      ["3. Sr No of PV Module", ""],
+      ["3. Inverter Make ", `:- ${data.invertermanufacture}`],
+      ["4. Inverter Capacity", `:- ${data.invertercapacity}`],
+      ["5. Sr No of PV Module", ""],
     ],
     theme: "plain",
     styles: { fontSize: 10, cellPadding: 2 },

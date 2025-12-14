@@ -419,6 +419,26 @@ export default function SolarForm({ formData, onChange }) {
               className="w-full p-2 border rounded-md"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Inverter Manufacture</label>
+            <input
+              type="text"
+              name="invertermanufacture"
+              value={formData?.invertermanufacture || ""}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Inverter Capacity</label>
+            <input
+              type="text"
+              name="invertercapacity"
+              value={formData?.invertercapacity || ""}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-1">Module Serial Numbers</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
