@@ -564,6 +564,7 @@ export default function Multipurpose() {
                   <option value="Mumbai">Mumbai</option>
                   <option value="Palghar">Palghar</option>
                   <option value="Dhule">Dhule</option>
+                  <option value="Pune">Pune</option>
                 </select>
               </div>
               <SolarForm formData={formData} onChange={handleFormChange} />
