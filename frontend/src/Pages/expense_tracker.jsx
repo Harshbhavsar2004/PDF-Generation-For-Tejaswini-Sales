@@ -176,7 +176,7 @@ export default function ExpenseTracker() {
               Current Balance
             </p>
             <p className="text-5xl sm:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              ${balance.toFixed(2)}
+              ₹{balance.toFixed(2)}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/expense-tracker/new-transaction">
@@ -214,7 +214,7 @@ export default function ExpenseTracker() {
               <div>
                 <p className="text-sm text-muted-foreground">Total Credits</p>
                 <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
-                  ${totalCredits.toFixed(2)}
+                  ₹{totalCredits.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -231,7 +231,7 @@ export default function ExpenseTracker() {
               <div>
                 <p className="text-sm text-muted-foreground">Total Debits</p>
                 <p className="text-2xl font-semibold text-red-600 dark:text-red-400">
-                  ${totalDebits.toFixed(2)}
+                  ₹{totalDebits.toFixed(2)}
                 </p>
               </div>
             </div>
