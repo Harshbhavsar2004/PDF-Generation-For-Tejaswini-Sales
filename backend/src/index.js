@@ -10,9 +10,7 @@ const app = express();
 const corsOptions = {
   origin: [
     'https://rtsdocumentgeneration.vercel.app/',
-     'https://rtsdocumentgeneration.vercel.app',
-     'http://localhost:5173',
-     'http://localhost:5173/'
+     'https://rtsdocumentgeneration.vercel.app'
   ],
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
