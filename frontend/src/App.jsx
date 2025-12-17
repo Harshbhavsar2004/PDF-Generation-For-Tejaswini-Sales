@@ -15,6 +15,7 @@ import ExpenseTracker from "./Pages/expense_tracker"
 import NewTransactionPage from "./Pages/new_transaction/New_transaction"
 import TransactionsPage from "./Pages/transactions/transactions"
 import PartiesPage from "./Pages/parties/Partiespage"
+import SolarGSTBill from "./Pages/Solarbillformat"
 
 // -------------------- HOME --------------------
 const Home = () => {
@@ -108,6 +109,7 @@ const Navigation = () => {
         <div className="hidden md:flex items-center space-x-8">
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/generate-report" className="nav-link">Work Completion</Link>
+          <Link to="/billing-page" className="nav-link">Billing Page</Link>
           <Link to="/multi-purpose" className="nav-link">Documents</Link>
         </div>
 
@@ -150,6 +152,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/generate-report" element={<WorkCompletionForm />} />
           <Route path="/multi-purpose" element={<MultiPurposeForm />} />
+          <Route path="/billing-page" element={<SolarGSTBill />} />
           {/* Expense Tracker (NO NAVBAR) */}
           <Route path="/expense-tracker" element={<ExpenseTracker />} />
           <Route
