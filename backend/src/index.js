@@ -17,6 +17,7 @@ const corsOptions = {
   origin: [
     "https://rtsdocumentgeneration.vercel.app/",
     "https://rtsdocumentgeneration.vercel.app",
+    "http://localhost:5173",
 
   ],
   methods: ["GET", "POST", "DELETE", "OPTIONS"],
@@ -60,7 +61,7 @@ app.get("/", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-
+app.post("/api/import", upload.single("file"), importCsvData);
 // Routes
 const workCompletionRoutes = require("./routes/workCompletion");
 const multiPurposeFormRoutes = require("./routes/multiPurposeForm");
@@ -79,7 +80,7 @@ app.use((err, req, res, next) => {
 app.get("/api/data/files", getFileTags);
 console.log(getFileTags)
 app.use("/api/data", customerDataRoutes);
-app.get("/api/data/import-csv", upload.single("file"), importCsvData);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

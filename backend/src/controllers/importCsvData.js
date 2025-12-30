@@ -2,6 +2,7 @@ const csv = require("csvtojson");
 const ConsumerCsvRow = require("../models/ConsumerCsvRow");
 
 async function importCsvData(req, res) {
+  console.log("IMPORT CSV DATA CALLED");
   try {
     const { fileTag } = req.body;
     const file = req.file;
