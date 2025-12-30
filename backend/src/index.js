@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-import { importCsvData } from './controllers/importCsvData.js';
+const {importCsvData} = require("./controllers/importCsvData");
 const multer = require("multer");
 const upload = multer();
 const { getFileTags } = require("./routes/getfiletags");
@@ -79,7 +79,7 @@ app.use((err, req, res, next) => {
 app.get("/api/data/files", getFileTags);
 console.log(getFileTags)
 app.use("/api/data", customerDataRoutes);
-app.get("/api/data/parse-excel", upload.single("file"), importCsvData);
+app.get("/api/data/import-csv", upload.single("file"), importCsvData);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
