@@ -29,7 +29,7 @@ export function InvoiceGenerator() {
   useEffect(() => {
     async function fetchFiles() {
       try {
-        const res = await fetch("http://localhost:5000/api/data/files");
+        const res = await fetch("https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/files");
         const data = await res.json();
 
         if (Array.isArray(data)) setFiles(data);
@@ -46,7 +46,7 @@ export function InvoiceGenerator() {
   useEffect(() => {
     if (!selectedFile) return;
 
-    fetch(`http://localhost:5000/api/data/customers?fileTag=${selectedFile}`)
+    fetch(`https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/customers?fileTag=${selectedFile}`)
       .then((res) => res.json())
       .then((data) => {
         setCustomers(data);
@@ -159,7 +159,7 @@ function mapDbRowToInvoice(row, customerName) {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/data/mark-done", {
+      const res = await fetch("https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/mark-done", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

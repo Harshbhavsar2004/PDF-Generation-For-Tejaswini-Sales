@@ -32,7 +32,7 @@ export default function UploadExcelPage() {
       formData.append("fileTag", fileName); // 🔥 dataset identifier
       formData.append("file", file);
 
-      const res = await fetch("http://localhost:5000/api/data/import-csv", {
+      const res = await fetch("https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/import-csv", {
         method: "POST",
         body: formData,
       });
