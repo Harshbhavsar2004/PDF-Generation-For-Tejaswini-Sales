@@ -29,7 +29,9 @@ export function InvoiceGenerator() {
   useEffect(() => {
     async function fetchFiles() {
       try {
-        const res = await fetch("https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/files");
+        const res = await fetch(
+          "https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/files"
+        );
         const data = await res.json();
 
         if (Array.isArray(data)) setFiles(data);
@@ -46,7 +48,9 @@ export function InvoiceGenerator() {
   useEffect(() => {
     if (!selectedFile) return;
 
-    fetch(`https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/customers?fileTag=${selectedFile}`)
+    fetch(
+      `https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/customers?fileTag=${selectedFile}`
+    )
       .then((res) => res.json())
       .then((data) => {
         setCustomers(data);
@@ -74,82 +78,84 @@ export function InvoiceGenerator() {
   const isInvoiceAlreadyGenerated = Boolean(invoiceNumber);
 
   /* ================= MAP DB → INVOICE ================= */
-function mapDbRowToInvoice(row, customerName) {
-  if (!row) return null;
+  function mapDbRowToInvoice(row, customerName) {
+    if (!row) return null;
 
-  const serialNumbers =
-    row["PV Module Serial No"]?.split(",").map((s) => s.trim()) || [];
+    const serialNumbers =
+      row["PV Module Serial No"]?.split(",").map((s) => s.trim()) || [];
 
-  return {
-    invoiceNo: invoiceNumber,
-    date: row["Inspection Date"],
+    return {
+      invoiceNo: invoiceNumber,
+      date: row["Inspection Date"],
 
-    customerName,
-    ConsumberNo: row["Consumer Number"] || "N/A",
-    customerAddress: row["Consumer Address"] || "N/A",
+      customerName,
+      ConsumberNo: row["Consumer Number"] || "N/A",
+      customerAddress: row["Consumer Address"] || "N/A",
 
-    items: [
-      {
-        component: "Solar PV Modules",
-        capacity: {
-          text: `${row["Module Capacity (WP)"]} WATT (${row["Module Quantity"]} NOS)`,
-          serials: serialNumbers,
+      items: [
+        {
+          component: "Solar PV Modules",
+          capacity: {
+            text: `${row["Module Capacity (WP)"]} WATT (${row["Module Quantity"]} NOS)`,
+            serials: serialNumbers,
+          },
+          spec: row["PV Module Make"] || "N/A",
         },
-        spec: row["PV Module Make"] || "N/A",
-      },
-      {
-        component: "Grid Tie Inverter",
-        capacity: { text: `${row["Inverter Capacity (kW)"]} KW, 1 Phase` },
-        spec: row["Inverter Make"] || "N/A",
-      },
-      {
-        component: "Structure for Modules",
-        capacity: { text: `For ${row["Proposed PV Capacity (kWp)"]} kWp System` },
-        spec: "GI Pipe ALL (18 KG)",
-      },
-      {
-        component: "ACDB 1 In 1 Out",
-        capacity: { text: `For ${row["Proposed PV Capacity (kWp)"]} kWp System` },
-        spec: "As per standard",
-      },
-      {
-        component: "DCDB 2 In 2 Out",
-        capacity: { text: `For ${row["Proposed PV Capacity (kWp)"]} kWp System` },
-        spec: "As per standard",
-      },
-      {
-        component: "Earthing Rod",
-        capacity: { text: "1 Meter / 3 Nos" },
-        spec: "GI Earthing with Chemical Bag",
-      },
-      {
-        component: "Lightning Arrestor",
-        capacity: { text: "Copper + SWG 10 Gauge" },
-        spec: "Copper + SWG 10 Gauge",
-      },
-      {
-        component: "Wires & Cables",
-        capacity: { text: "As per designs (Polycab / RR)" },
-        spec: "AC & DC Cables",
-      },
-      {
-        component: "Generation Meter",
-        capacity: { text: "For LT Connection" },
-        spec: "As per standard",
-      },
-    ],
+        {
+          component: "Grid Tie Inverter",
+          capacity: { text: `${row["Inverter Capacity (kW)"]} KW, 1 Phase` },
+          spec: row["Inverter Make"] || "N/A",
+        },
+        {
+          component: "Structure for Modules",
+          capacity: {
+            text: `For ${row["Proposed PV Capacity (kWp)"]} kWp System`,
+          },
+          spec: "GI Pipe ALL (18 KG)",
+        },
+        {
+          component: "ACDB 1 In 1 Out",
+          capacity: {
+            text: `For ${row["Proposed PV Capacity (kWp)"]} kWp System`,
+          },
+          spec: "As per standard",
+        },
+        {
+          component: "DCDB 2 In 2 Out",
+          capacity: {
+            text: `For ${row["Proposed PV Capacity (kWp)"]} kWp System`,
+          },
+          spec: "As per standard",
+        },
+        {
+          component: "Earthing Rod",
+          capacity: { text: "1 Meter / 3 Nos" },
+          spec: "GI Earthing with Chemical Bag",
+        },
+        {
+          component: "Lightning Arrestor",
+          capacity: { text: "Copper + SWG 10 Gauge" },
+          spec: "Copper + SWG 10 Gauge",
+        },
+        {
+          component: "Wires & Cables",
+          capacity: { text: "As per designs (Polycab / RR)" },
+          spec: "AC & DC Cables",
+        },
+        {
+          component: "Generation Meter",
+          capacity: { text: "For LT Connection" },
+          spec: "As per standard",
+        },
+      ],
 
-    total: totalCost
-      ? `Rs ${Number(totalCost).toLocaleString("en-IN")}/-`
-      : "",
-  };
-}
+      total: totalCost
+        ? `Rs ${Number(totalCost).toLocaleString("en-IN")}/-`
+        : "",
+    };
+  }
 
-
-  const invoiceData = mapDbRowToInvoice(
-    selectedCustomerData,
-    selectedCustomer
-  );
+  const invoiceData = mapDbRowToInvoice(selectedCustomerData, selectedCustomer);
 
   /* ================= MARK DONE ================= */
   const handleMarkAsDone = async () => {
@@ -159,16 +165,19 @@ function mapDbRowToInvoice(row, customerName) {
     }
 
     try {
-      const res = await fetch("https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/mark-done", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileTag: selectedFile,
-          rowIndex: selectedCustomerData.rowIndex,
-          invoiceDate,
-          totalCost,
-        }),
-      });
+      const res = await fetch(
+        "https://pdf-generation-for-tejaswini-sales.vercel.app/api/data/mark-done",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileTag: selectedFile,
+            rowIndex: selectedCustomerData.rowIndex,
+            invoiceDate,
+            totalCost,
+          }),
+        }
+      );
 
       const result = await res.json();
       if (!res.ok) throw new Error(result.message);
@@ -244,9 +253,9 @@ function mapDbRowToInvoice(row, customerName) {
           <input
             type="number"
             placeholder="Total Cost"
-            disabled={false}
             value={totalCost}
             onChange={(e) => setTotalCost(e.target.value)}
+            onWheel={(e) => e.target.blur()} // 👈 stops scroll change
             className="border rounded px-3 py-2 disabled:bg-gray-100"
           />
 
