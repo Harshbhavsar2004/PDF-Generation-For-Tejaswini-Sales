@@ -16,6 +16,8 @@ import NewTransactionPage from "./Pages/new_transaction/New_transaction"
 import TransactionsPage from "./Pages/transactions/transactions"
 import PartiesPage from "./Pages/parties/Partiespage"
 import SolarGSTBill from "./Pages/Solarbillformat"
+import { InvoiceGenerator } from "./Pages/InvoiceGeneration/InvoiceGeneration"
+import UploadExcelPage from "./Pages/InvoiceGeneration/UploadExcelPage"
 
 // -------------------- HOME --------------------
 const Home = () => {
@@ -110,6 +112,9 @@ const Navigation = () => {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/generate-report" className="nav-link">Work Completion</Link>
           <Link to="/billing-page" className="nav-link">Billing Page</Link>
+          <Link to="/upload-excel" className="nav-link">Upload Excel file</Link>
+
+          <Link to="/invoice-generation" className="nav-link">Invoice Generation</Link>
           <Link to="/multi-purpose" className="nav-link">Documents</Link>
         </div>
 
@@ -153,6 +158,8 @@ export default function App() {
           <Route path="/generate-report" element={<WorkCompletionForm />} />
           <Route path="/multi-purpose" element={<MultiPurposeForm />} />
           <Route path="/billing-page" element={<SolarGSTBill />} />
+          <Route path="/invoice-generation" element={<InvoiceGenerator />} />
+          <Route path="/upload-excel" element={<UploadExcelPage />} />
           {/* Expense Tracker (NO NAVBAR) */}
           <Route path="/expense-tracker" element={<ExpenseTracker />} />
           <Route
